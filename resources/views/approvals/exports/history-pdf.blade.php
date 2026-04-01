@@ -129,7 +129,6 @@
                     $status = $h->status->value;
                     $wasApproved = $h->approvalLogs->where('action', 'approve')->count() > 0;
                 @endphp
-
                 <td>
                     @if ($status == 'rejected')
                         <span class="status-rejected">Ditolak</span>
@@ -141,7 +140,7 @@
                             <div style="font-size:10px; color:green;">
                                 ✓ (Sempat Disetujui)
                             </div>
-                    @endif
+                        @endif
 
                     @else
                         <span class="status-approved">Disetujui</span>
