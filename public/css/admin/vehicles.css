@@ -1,0 +1,214 @@
+/* ==========================================================
+   vehicles.css — Admin Kelola Unit
+   Digunakan oleh: resources/views/admin/vehicles/index.blade.php
+   ========================================================== */
+
+/* ──────────────────────────────────────────
+   1. HEADER & TOMBOL TAMBAH
+────────────────────────────────────────── */
+.veh-page-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 479px) {
+    .veh-btn-tambah {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* ──────────────────────────────────────────
+   2. FILTER BAR
+────────────────────────────────────────── */
+.veh-filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.veh-filter-search {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.veh-filter-select {
+    flex: 0 1 auto;
+    min-width: 120px;
+}
+
+.veh-filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    border-left: 1px solid #d1d5db;
+    padding-left: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* Tablet ke bawah: label tetap tersembunyi, input stack */
+@media (max-width: 767px) {
+    .veh-filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .veh-filter-search,
+    .veh-filter-select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .veh-filter-actions {
+        border-left: none;
+        border-top: 1px solid #d1d5db;
+        padding-left: 0;
+        padding-top: 0.625rem;
+    }
+
+    .veh-filter-actions a,
+    .veh-filter-actions button {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+/* ──────────────────────────────────────────
+   3. TABEL
+────────────────────────────────────────── */
+.veh-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Kolom catatan dibatasi lebar supaya tidak melar */
+.veh-col-notes {
+    max-width: 200px;
+}
+
+@media (max-width: 767px) {
+    .veh-col-notes {
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 479px) {
+    .veh-col-notes {
+        max-width: 80px;
+    }
+}
+
+/* Sembunyikan kolom yang kurang penting di layar sangat kecil */
+@media (max-width: 479px) {
+    .veh-hide-xs {
+        display: none;
+    }
+}
+
+/* ──────────────────────────────────────────
+   4. MODAL — OVERLAY
+────────────────────────────────────────── */
+.veh-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;          /* toggled via JS (flex) */
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* smooth fade */
+    animation: vehFadeIn 0.15s ease forwards;
+}
+
+.veh-modal-overlay.flex {
+    display: flex;
+}
+
+@keyframes vehFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ──────────────────────────────────────────
+   5. MODAL — KOTAK KONTEN
+────────────────────────────────────────── */
+.veh-modal-box {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 32rem;
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    /* slide-up animation */
+    animation: vehSlideUp 0.18s ease forwards;
+}
+
+@keyframes vehSlideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Mobile: modal muncul dari bawah seperti bottom sheet */
+@media (max-width: 639px) {
+    .veh-modal-overlay {
+        align-items: flex-end;
+    }
+
+    .veh-modal-box {
+        margin: 0;
+        max-width: 100%;
+        max-height: 92vh;
+        border-radius: 1rem 1rem 0 0;
+    }
+
+    @keyframes vehSlideUp {
+        from { transform: translateY(48px); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+    }
+}
+
+/* ──────────────────────────────────────────
+   6. MODAL — GRID FORM (2 kolom → 1 kolom)
+────────────────────────────────────────── */
+.veh-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 479px) {
+    .veh-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ──────────────────────────────────────────
+   7. PAGINATION — responsif
+────────────────────────────────────────── */
+@media (max-width: 639px) {
+    nav[aria-label="Pagination"] {
+        justify-content: center;
+    }
+}
+
+/* ──────────────────────────────────────────
+   8. SCROLL BAR — tipis & subtle
+────────────────────────────────────────── */
+.veh-table-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+.veh-table-wrapper::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+.veh-table-wrapper::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+}
+.veh-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}

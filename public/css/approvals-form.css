@@ -1,0 +1,12 @@
+.approval-detail dt {
+    font-weight: 600;
+    color: #444;
+}
+
+.approval-detail dd {
+    margin-bottom: .75rem;
+}
+
+.modal-title {
+    font-weight: 600;
+}

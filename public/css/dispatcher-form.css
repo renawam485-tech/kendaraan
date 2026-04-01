@@ -1,0 +1,511 @@
+/* ============================================
+   Alpine.js Cloak
+   ============================================ */
+[x-cloak] {
+    display: none !important;
+}
+
+/* ============================================
+   Slim Task Card
+   ============================================ */
+.task-card {
+    display: grid;
+    grid-template-columns: 32px 140px 1fr 220px 24px;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+
+.task-card:hover {
+    border-color: #93c5fd;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+.task-card:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Number */
+.task-num {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Booking Code */
+.task-booking {
+    border-right: 1px solid #e5e7eb;
+    padding-right: 12px;
+}
+
+.booking-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2563eb;
+    letter-spacing: 0.02em;
+}
+
+/* Person */
+.task-person {
+    min-width: 0;
+}
+
+.person-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.person-email {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+}
+
+/* Schedule */
+.task-schedule {
+    display: flex;
+    gap: 16px;
+    border-left: 1px solid #e5e7eb;
+    padding-left: 12px;
+}
+
+.schedule-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.schedule-label {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+}
+
+.schedule-value {
+    font-size: 0.78rem;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Arrow */
+.task-arrow {
+    font-size: 1.1rem;
+    color: #9ca3af;
+    text-align: center;
+    line-height: 1;
+}
+
+/* ============================================
+   Drawer Overlay
+   ============================================ */
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 199;
+}
+
+/* Overlay transitions */
+.overlay-enter { transition: opacity 0.15s ease; }
+.overlay-from  { opacity: 0; }
+.overlay-to    { opacity: 1; }
+.overlay-leave { transition: opacity 0.12s ease; }
+
+/* ============================================
+   Side Drawer Panel
+   ============================================ */
+.drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 420px;
+    max-width: 95vw;
+    background: white;
+    z-index: 200;
+    overflow-y: auto;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Drawer transitions — CSS transform (GPU-accelerated) */
+.drawer-enter { transition: transform 0.2s ease; }
+.drawer-from  { transform: translateX(100%); }
+.drawer-to    { transform: translateX(0); }
+.drawer-leave { transition: transform 0.15s ease; }
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.drawer-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+
+.drawer-close:hover {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.drawer-section {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.drawer-section:last-child {
+    border-bottom: none;
+}
+
+.drawer-section-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.625rem;
+}
+
+/* Schedule boxes inside drawer */
+.schedule-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 0.625rem 0.75rem;
+}
+
+.schedule-box-label {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+.schedule-box-value {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.schedule-box-time {
+    font-size: 0.7rem;
+    color: #6b7280;
+    margin-top: 1px;
+}
+
+/* ============================================
+   Badge Styles
+   ============================================ */
+.badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.badge-rental {
+    background: #fffaf0;
+    color: #9c4221;
+    border: 1px solid #feebc8;
+}
+
+.badge-vehicle {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    border: 1px solid #bee3f8;
+}
+
+.badge-neutral {
+    background: #f7fafc;
+    color: #4a5568;
+    border: 1px solid #edf2f7;
+}
+
+.badge-count {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+/* ============================================
+   Mode Badge
+   ============================================ */
+.mode-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.mode-internal {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.mode-external {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+/* ============================================
+   Dropdown Styles
+   ============================================ */
+.relative-wrapper {
+    position: relative;
+}
+
+.dropdown-trigger {
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    font-size: 0.8rem;
+    color: #374151;
+}
+
+.dropdown-trigger:hover {
+    border-color: #9ca3af;
+    background-color: #f9fafb;
+}
+
+.dropdown-trigger:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dropdown-panel {
+    position: absolute;
+    z-index: 300;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-top: 0.25rem;
+    max-height: 280px;
+    overflow: hidden;
+}
+
+.dropdown-search {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    outline: none;
+    font-size: 0.8rem;
+}
+
+.dropdown-search:focus {
+    background-color: #f9fafb;
+}
+
+.dropdown-list {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    font-size: 0.8rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+/* ============================================
+   Input Styles
+   ============================================ */
+.input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    outline: none;
+    transition: border-color 0.15s;
+    font-size: 0.8rem;
+    color: #374151;
+}
+
+.input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input::placeholder {
+    color: #9ca3af;
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-size: 0.8rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-external {
+    background-color: #f59e0b;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-size: 0.8rem;
+}
+
+.btn-external:hover {
+    background-color: #d97706;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+    .task-card {
+        grid-template-columns: 28px 1fr 24px;
+        grid-template-rows: auto auto;
+        gap: 8px;
+        padding: 0.75rem;
+    }
+
+    .task-booking {
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .task-person {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .task-booking {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .task-schedule {
+        grid-column: 1 / -1;
+        border-left: none;
+        border-top: 1px solid #e5e7eb;
+        padding-left: 0;
+        padding-top: 8px;
+        gap: 12px;
+    }
+
+    .task-arrow {
+        grid-row: 1 / 3;
+        grid-column: 3;
+    }
+
+    .task-num {
+        grid-row: 1;
+    }
+
+    .drawer-panel {
+        width: 100%;
+        max-width: 100%;
+        height: 90vh;
+        top: auto;
+        bottom: 0;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile drawer slides up from bottom */
+    .drawer-from { transform: translateY(100%); }
+    .drawer-to   { transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .task-schedule {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .schedule-item {
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
+}

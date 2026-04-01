@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Notifications;
+
+use App\Models\Booking;
+use Illuminate\Notifications\Notification;
+
+class CancelledByStaffNotification extends Notification
+{
+    public function __construct(private Booking $booking) {}
+
+    public function via(object $notifiable): array
+    {
+        return ['database'];
+    }
+
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'title'        => 'Pengajuan Dibatalkan oleh Staff',
+            'message'      => "{$this->booking->user->name} membatalkan pengajuan {$this->booking->booking_code} ke {$this->booking->destination}. Tidak perlu diproses lebih lanjut.",
+            'icon'         => 'x',
+            'color'        => 'yellow',
+            'booking_id'   => $this->booking->id,
+            'booking_code' => $this->booking->booking_code,
+        ];
+    }
+}

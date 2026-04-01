@@ -1,0 +1,291 @@
+/* ============================================================
+ * public/css/help.css
+ * Stylesheet untuk halaman Pusat Bantuan — Drivora
+ * ============================================================ */
+
+/* ── Header ─────────────────────────────────────────────────── */
+
+.help-header {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+    border-bottom: 1px solid #1d4ed8;
+}
+
+.help-header-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+/* ── Search input ────────────────────────────────────────────── */
+
+.help-search-input {
+    width: 100%;
+    padding: 11px 44px 11px 44px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.help-search-input::placeholder {
+    color: #9ca3af;
+}
+
+.help-search-input:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ── Category tabs ────────────────────────────────────────────── */
+
+.help-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.help-tab-base {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+.help-tab {
+    background: #fff;
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+.help-tab:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.help-tab-active {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    font-weight: 600;
+}
+
+/* ── Section icon colors ──────────────────────────────────────── */
+
+.help-sec-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.help-sec-icon--blue   { background: #dbeafe; color: #1d4ed8; }
+.help-sec-icon--indigo { background: #e0e7ff; color: #4338ca; }
+.help-sec-icon--green  { background: #d1fae5; color: #065f46; }
+.help-sec-icon--yellow { background: #fef3c7; color: #92400e; }
+.help-sec-icon--gray   { background: #f3f4f6; color: #4b5563; }
+.help-sec-icon--purple { background: #ede9fe; color: #5b21b6; }
+
+/* ── FAQ accordion card ───────────────────────────────────────── */
+
+.help-faq-item {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.help-faq-item:hover {
+    border-color: #bfdbfe;
+}
+
+.help-faq-item--open {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.06);
+}
+
+.help-faq-q {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s;
+}
+
+.help-faq-q:hover {
+    background: #f8faff;
+}
+
+.help-faq-chevron {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    transition: transform 0.2s ease, color 0.15s;
+    margin-top: 1px;
+}
+
+.help-faq-item--open .help-faq-chevron {
+    color: #2563eb;
+}
+
+.help-faq-a {
+    border-top: 1px solid #f0f4ff;
+}
+
+.help-faq-a-inner {
+    padding: 14px 18px 16px;
+    font-size: 13.5px;
+    color: #4b5563;
+    line-height: 1.75;
+}
+
+/* ── Status badge (bs) ────────────────────────────────────────── */
+
+.bs {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1.6;
+}
+
+.bs-yellow { background: #fef3c7; color: #92400e; }
+.bs-blue   { background: #dbeafe; color: #1e40af; }
+.bs-red    { background: #fee2e2; color: #991b1b; }
+.bs-purple { background: #ede9fe; color: #5b21b6; }
+.bs-green  { background: #d1fae5; color: #065f46; }
+.bs-gray   { background: #f3f4f6; color: #374151; }
+.bs-orange { background: #ffedd5; color: #9a3412; }
+
+/* ── Status grid (tabel status) ───────────────────────────────── */
+
+.status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.status-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.status-row > span:first-child {
+    flex-shrink: 0;
+    min-width: 148px;
+}
+
+.status-row > span:last-child {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.6;
+    padding-top: 2px;
+}
+
+/* ── FAQ list (ul inside answer) ──────────────────────────────── */
+
+.faq-list {
+    margin-top: 8px;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    list-style: disc;
+}
+
+.faq-list li {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.65;
+}
+
+/* ── Search highlight ─────────────────────────────────────────── */
+
+mark.help-hl {
+    background: #fef08a;
+    color: #713f12;
+    border-radius: 3px;
+    padding: 0 2px;
+    font-style: normal;
+}
+
+/* ── Footer card ──────────────────────────────────────────────── */
+
+.help-footer {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+    .help-header {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .help-faq-q {
+        padding: 13px 14px;
+    }
+
+    .help-faq-a-inner {
+        padding: 12px 14px 14px;
+    }
+
+    .status-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .status-row > span:first-child {
+        min-width: auto;
+    }
+
+    .help-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .help-tabs::-webkit-scrollbar {
+        display: none;
+    }
+}

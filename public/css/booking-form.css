@@ -1,0 +1,484 @@
+/* ====================================================================
+   booking-form.css
+   Form peminjaman kendaraan + custom datetime picker
+   ==================================================================== */
+
+/* ---- reset / base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ---- layout wrapper ---- */
+.form-wrapper {
+    min-height: 100vh;
+    background: #f1f5f9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem 4rem;
+}
+
+.minimal-form {
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,.07);
+    padding: 2rem;
+    width: 100%;
+    max-width: 640px;
+}
+
+/* ---- form header ---- */
+.form-header { margin-bottom: 1.75rem; }
+.form-header h1 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 .25rem;
+}
+.form-header p {
+    font-size: .875rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* ---- group ---- */
+.form-group { margin-bottom: 1.25rem; }
+
+.label-title {
+    display: block;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: .4rem;
+    letter-spacing: .01em;
+}
+
+.form-divider {
+    border: none;
+    border-top: 1px dashed #e2e8f0;
+    margin: 1.5rem 0;
+}
+
+/* ---- text / textarea / number ---- */
+.text-field {
+    width: 100%;
+    padding: .6rem .875rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .5rem;
+    font-size: .9rem;
+    color: #1e293b;
+    transition: border-color .15s, box-shadow .15s;
+    background: #fff;
+    outline: none;
+}
+.text-field:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+
+/* ---- radio boxes (mode pilih armada) ---- */
+.radio-stack { display: flex; flex-direction: column; gap: .5rem; }
+.radio-box {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .875rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .625rem;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.radio-box:hover { border-color: #93c5fd; background: #f0f9ff; }
+.radio-box input[type="radio"] { margin-top: .2rem; accent-color: #3b82f6; }
+.radio-info span { font-size: .9rem; color: #1e293b; }
+.radio-info p  { font-size: .8rem; color: #64748b; margin: .1rem 0 0; }
+
+/* ---- search-select (vehicle) ---- */
+.search-select { position: relative; }
+.select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .6rem .875rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .5rem;
+    font-size: .9rem;
+    color: #1e293b;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .15s;
+}
+.select-trigger:hover { border-color: #93c5fd; }
+.icon-sm { width: 1rem; height: 1rem; color: #94a3b8; flex-shrink: 0; }
+.select-dropdown {
+    position: absolute;
+    top: calc(100% + .25rem);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,.1);
+    z-index: 50;
+    overflow: hidden;
+}
+.search-field {
+    width: 100%;
+    padding: .6rem .875rem;
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: .875rem;
+    outline: none;
+    color: #1e293b;
+}
+.options-list { list-style: none; margin: 0; padding: .25rem 0; max-height: 180px; overflow-y: auto; }
+.options-list li {
+    padding: .5rem .875rem;
+    font-size: .875rem;
+    color: #374151;
+    cursor: pointer;
+    transition: background .1s;
+}
+.options-list li:hover { background: #eff6ff; color: #1d4ed8; }
+
+/* ---- warning / schedule box ---- */
+.warning-box {
+    background: #fff7f7;
+    border: 1px solid #fecaca;
+    border-radius: .5rem;
+    padding: .75rem 1rem;
+}
+
+/* ---- checkbox ---- */
+.checkbox-item {
+    border: 1.5px solid #e2e8f0;
+    border-radius: .625rem;
+    padding: .875rem 1rem;
+}
+.checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    cursor: pointer;
+}
+.custom-check { margin-top: .2rem; accent-color: #3b82f6; }
+.checkbox-text span { font-size: .9rem; color: #1e293b; }
+.checkbox-text p   { font-size: .8rem; color: #64748b; margin: .1rem 0 0; }
+
+/* ---- submit button ---- */
+.submit-btn {
+    width: 100%;
+    padding: .8rem;
+    background: #2563eb;
+    color: #fff;
+    font-size: .9375rem;
+    font-weight: 600;
+    border: none;
+    border-radius: .625rem;
+    cursor: pointer;
+    transition: background .15s, transform .1s, opacity .15s;
+    margin-top: .5rem;
+}
+.submit-btn:hover:not(:disabled) { background: #1d4ed8; }
+.submit-btn:active:not(:disabled) { transform: scale(.99); }
+.submit-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ---- alert box (server conflict) ---- */
+.alert-danger {
+    background: #fef2f2;
+    border: 1.5px solid #fca5a5;
+    border-radius: .625rem;
+    padding: .875rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: .625rem;
+    margin-bottom: 1rem;
+}
+.alert-danger svg { flex-shrink: 0; margin-top: .1rem; color: #dc2626; }
+.alert-danger p { margin: 0; font-size: .875rem; color: #b91c1c; font-weight: 500; }
+
+/* ==================================================================
+   CUSTOM DATETIME PICKER
+   ================================================================== */
+
+/* wrapper */
+.dt-wrapper {
+    position: relative;
+}
+
+/* trigger button */
+.dt-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    padding: .6rem .875rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .5rem;
+    background: #fff;
+    color: #94a3b8;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+    text-align: left;
+}
+.dt-trigger svg { flex-shrink: 0; color: #94a3b8; }
+.dt-trigger.dt-trigger--filled { color: #1e293b; }
+.dt-trigger.dt-trigger--active {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+.dt-trigger:hover { border-color: #93c5fd; }
+
+.dt-trigger-text { flex: 1; }
+
+.dt-clear-btn {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: none;
+    background: #e2e8f0;
+    border-radius: 50%;
+    font-size: .65rem;
+    color: #64748b;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .1s;
+}
+.dt-clear-btn:hover { background: #fecaca; color: #dc2626; }
+
+/* panel */
+.dt-panel {
+    position: absolute;
+    top: calc(100% + .35rem);
+    left: 0;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .75rem;
+    box-shadow: 0 12px 32px rgba(0,0,0,.12);
+    z-index: 100;
+    width: 296px;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* calendar header */
+.dt-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .75rem 1rem .5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+.dt-cal-header span {
+    font-size: .875rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+.dt-nav-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: none;
+    background: #f1f5f9;
+    border-radius: .375rem;
+    font-size: 1rem;
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .1s;
+}
+.dt-nav-btn:hover { background: #e2e8f0; }
+
+/* day-of-week row */
+.dt-dow-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: .4rem .5rem .2rem;
+}
+.dt-dow {
+    text-align: center;
+    font-size: .7rem;
+    font-weight: 600;
+    color: #94a3b8;
+    padding: .25rem 0;
+}
+
+/* days grid */
+.dt-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    padding: .25rem .5rem .75rem;
+}
+.dt-day-btn {
+    width: 100%;
+    aspect-ratio: 1;
+    border: none;
+    background: transparent;
+    border-radius: .375rem;
+    font-size: .8125rem;
+    color: #374151;
+    cursor: pointer;
+    transition: background .1s, color .1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dt-day-btn:hover:not(.dt-day--disabled):not(.dt-day--empty) {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.dt-day-btn.dt-day--today {
+    font-weight: 700;
+    color: #2563eb;
+    background: #eff6ff;
+}
+.dt-day-btn.dt-day--selected {
+    background: #2563eb !important;
+    color: #fff !important;
+    font-weight: 700;
+}
+.dt-day-btn.dt-day--disabled {
+    color: #cbd5e1;
+    cursor: not-allowed;
+}
+.dt-day-btn.dt-day--empty {
+    cursor: default;
+    pointer-events: none;
+}
+
+/* time picker */
+.dt-time-panel {
+    padding: 1.25rem 1rem 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+.dt-time-label {
+    font-size: .8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-align: center;
+    margin: 0 0 .875rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.dt-time-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+.dt-stepper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+}
+.dt-step-btn {
+    width: 2rem;
+    height: 1.75rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .375rem;
+    background: #f8fafc;
+    color: #475569;
+    font-size: .8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .1s, border-color .1s;
+}
+.dt-step-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+.dt-time-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    min-width: 2.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+.dt-colon {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #94a3b8;
+    line-height: 1;
+}
+.dt-time-hint {
+    text-align: center;
+    font-size: .73rem;
+    color: #94a3b8;
+    margin-bottom: .875rem;
+}
+.dt-time-actions {
+    display: flex;
+    gap: .5rem;
+}
+.dt-btn-back {
+    flex: 1;
+    padding: .55rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .5rem;
+    background: #fff;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: background .1s;
+}
+.dt-btn-back:hover { background: #f1f5f9; }
+.dt-btn-confirm {
+    flex: 2;
+    padding: .55rem;
+    border: none;
+    border-radius: .5rem;
+    background: #2563eb;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: background .1s;
+}
+.dt-btn-confirm:hover { background: #1d4ed8; }
+
+/* end picker panel align right on small space */
+.dt-panel--right {
+    left: auto;
+    right: 0;
+}
+
+/* ---- validation hint under picker ---- */
+.dt-hint {
+    margin-top: .3rem;
+    font-size: .78rem;
+    font-weight: 500;
+    padding: .35rem .6rem;
+    border-radius: .375rem;
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+}
+.dt-hint--error   { background: #fef2f2; color: #b91c1c; }
+.dt-hint--warning { background: #fffbeb; color: #92400e; }
+.dt-hint--ok      { background: #f0fdf4; color: #166534; }
+
+/* ---- loading spinner on submit ---- */
+.spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+    margin-right: .375rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- responsive ---- */
+@media (max-width: 480px) {
+    .minimal-form { padding: 1.25rem 1rem; }
+    .dt-panel { width: calc(100vw - 2rem); max-width: 296px; }
+}
