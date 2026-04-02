@@ -28,8 +28,8 @@ class WelcomeNotification extends Notification
                 'icon'    => 'info',
                 'color'   => 'indigo',
             ],
-            'admin_ga' => [
-                'title'   => '👋 Selamat Datang, Admin GA!',
+            'admin  ' => [
+                'title'   => '👋 Selamat Datang, Admin!',
                 'message' => 'Anda mengelola seluruh operasional kendaraan — penugasan unit, koordinasi vendor, hingga pemantauan perjalanan aktif.',
                 'icon'    => 'info',
                 'color'   => 'blue',

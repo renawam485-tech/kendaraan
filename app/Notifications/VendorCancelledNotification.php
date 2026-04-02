@@ -18,7 +18,7 @@ class VendorCancelledNotification extends Notification
     {
         return [
             'title'        => 'Vendor Dibatalkan — Kendaraan Sedang Dicari',
-            'message'      => "Vendor untuk perjalanan Anda ({$this->booking->booking_code}) ke {$this->booking->destination} dibatalkan. Admin GA sedang mencari pengganti.",
+            'message'      => "Vendor untuk perjalanan Anda ({$this->booking->booking_code}) ke {$this->booking->destination} dibatalkan. Admin sedang mencari pengganti.",
             'icon'         => 'info',
             'color'        => 'yellow',
             'booking_id'   => $this->booking->id,

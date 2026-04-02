@@ -34,7 +34,7 @@ class UserManagementController extends Controller
             'name'         => 'required|string|max:255',
             'email'        => 'required|email|unique:users,email',
             'password'     => 'required|string|min:6',
-            'role'         => 'required|in:staff,driver,approver,admin_ga',
+            'role'         => 'required|in:staff,driver,approver,admin',
             'department'   => 'nullable|string|max:255',
             'phone_number' => 'nullable|string|max:20',
         ]);
@@ -57,7 +57,7 @@ class UserManagementController extends Controller
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => 'required|email|unique:users,email,' . $user->id,
-            'role'         => 'required|in:staff,driver,approver,admin_ga',
+            'role'         => 'required|in:staff,driver,approver,admin',
             'department'   => 'nullable|string|max:255',
             'phone_number' => 'nullable|string|max:20',
         ]);

@@ -2,43 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -46,21 +29,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // 1. Relasi: User sebagai pemohon
     public function bookings()
     {
-        // User memiliki banyak pesanan
         return $this->hasMany(Booking::class);
     }
 
+    // 2. Relasi: User sebagai atasan/approver
     public function approvals()
     {
-        // Atasan memiliki banyak pesanan yang harus disetujui
         return $this->hasMany(Booking::class, 'approver_id');
     }
 
+    // 3. Relasi: User sebagai driver
     public function assignedTrips()
     {
-        // Jika user adalah Driver, dia memiliki banyak tugas perjalanan
         return $this->hasMany(Booking::class, 'driver_id');
+    }
+
+    // 4. Pengecekan Hak Akses Admin
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }

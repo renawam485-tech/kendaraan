@@ -10,7 +10,7 @@ class HelpController extends Controller
     {
         $role      = Auth::user()->role;
         $roleLabel = match ($role) {
-            'admin_ga' => 'Admin GA',
+            'admin' => 'Admin GA',
             'approver' => 'Approver',
             default    => 'Staff',
         };
@@ -22,9 +22,9 @@ class HelpController extends Controller
 
     private function getFaqSections(string $role): array
     {
-        $all      = ['staff', 'approver', 'admin_ga'];
+        $all      = ['staff', 'approver', 'admin'];
         $approver = ['approver'];
-        $admin    = ['admin_ga'];
+        $admin    = ['admin'];
 
         $sections = [
 

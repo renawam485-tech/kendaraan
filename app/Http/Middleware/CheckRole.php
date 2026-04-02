@@ -21,7 +21,7 @@ class CheckRole
         }
 
         // Cek 2: Apakah role user sesuai dengan yang diminta?
-        // Kita bisa mengirim banyak role dipisah koma, misal: 'admin_ga,approver'
+        // Kita bisa mengirim banyak role dipisah koma, misal: 'adminver'
         $roles = explode(',', $role);
 
         if (! in_array($request->user()->role, $roles)) {

@@ -7,6 +7,8 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\Admin\TripHistoryExportController;
 use App\Http\Controllers\AdminDispatcherController;
 use App\Http\Controllers\Admin\VehicleController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\DashboardController; // <-- Added this import
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HelpController;
@@ -17,9 +19,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// <-- Replaced the closure with your DashboardController
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -47,7 +50,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // ─── ADMIN GA ─────────────────────────────────────────────────────────────
-    Route::middleware(['role:admin_ga'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
         // Dispatcher / persiapan
         Route::get('/dispatch',                             [AdminDispatcherController::class, 'index'])->name('dispatch');

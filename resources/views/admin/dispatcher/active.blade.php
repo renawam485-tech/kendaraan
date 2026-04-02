@@ -10,72 +10,94 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
 
                 {{-- COMPACT FILTER BAR --}}
-                <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
-                    <form action="{{ route('admin.active') }}" method="GET" class="flex items-center gap-3">
+                <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6 sm:py-4">
+                    <form action="{{ route('admin.active') }}" method="GET">
 
-                        {{-- Status Pills --}}
-                        <div class="flex items-center gap-1.5 pl-3">
-                            <input type="hidden" name="status" value="{{ request('status', 'all') }}"
-                                id="statusInput">
-
-                            <button type="button" onclick="setStatus('all')"
-                                class="status-pill {{ request('status', 'all') == 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} px-4 py-1.5 rounded-md text-sm font-medium transition"
-                                data-status="all">
-                                <span>Semua</span>
-                            </button>
-
-                            <div class="w-px h-8 bg-gray-300 mx-1"></div>
-
-                            <button type="button" onclick="setStatus('prepared')"
-                                class="status-pill {{ request('status') == 'prepared' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} px-4 py-1.5 rounded-md text-sm font-medium transition"
-                                data-status="prepared">
-                                <span>Disiapkan</span>
-                            </button>
-
-                            <div class="w-px h-8 bg-gray-300 mx-1"></div>
-
-                            <button type="button" onclick="setStatus('active')"
-                                class="status-pill {{ request('status') == 'active' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} px-4 py-1.5 rounded-md text-sm font-medium transition"
-                                data-status="active">
-                                <span>Sedang Jalan</span>
-                            </button>
-
-                            <div class="w-px h-8 bg-gray-300 mx-1"></div>
-                        </div>
-
-                        {{-- Search Input --}}
-                        <div class="flex-1 max-w-md">
+                        {{-- Row 1: Search (full width on mobile) --}}
+                        <div class="flex gap-2 sm:hidden mb-2">
                             <input type="text" name="search" value="{{ request('search') }}"
-                                placeholder="Cari peminjam, tujuan..."
-                                class="w-full border-gray-300 rounded-md text-sm py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                placeholder="Cari kode, peminjam, tujuan..."
+                                class="flex-1 border-gray-300 rounded-md text-sm py-2 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                            <button type="submit"
+                                class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
                         </div>
 
-                        {{-- Source Filter --}}
-                        <select name="source"
-                            class="border-gray-300 rounded-md text-sm py-1.5 px-3 pr-8 focus:ring-1 focus:ring-blue-500">
-                            <option value="">Semua Unit</option>
-                            <option value="internal" {{ request('source') == 'internal' ? 'selected' : '' }}>Mobil
-                                Kampus</option>
-                            <option value="external" {{ request('source') == 'external' ? 'selected' : '' }}>Sewa Luar
-                            </option>
-                        </select>
+                        {{-- Row 2 (mobile): Dropdowns + Reset --}}
+                        <div class="flex gap-2 sm:hidden">
+                            <select name="status" onchange="this.form.submit()"
+                                class="flex-1 border-gray-300 rounded-md text-sm py-2 px-2 focus:ring-1 focus:ring-blue-500 cursor-pointer bg-white">
+                                <option value="all" {{ request('status', 'all') == 'all' ? 'selected' : '' }}>Semua Status</option>
+                                <option value="prepared" {{ request('status') == 'prepared' ? 'selected' : '' }}>Disiapkan</option>
+                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Sedang Jalan</option>
+                                <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>Terlambat</option>
+                            </select>
+                            <select name="source" onchange="this.form.submit()"
+                                class="flex-1 border-gray-300 rounded-md text-sm py-2 px-2 focus:ring-1 focus:ring-blue-500 cursor-pointer bg-white">
+                                <option value="">Semua Unit</option>
+                                <option value="internal" {{ request('source') == 'internal' ? 'selected' : '' }}>Mobil Kampus</option>
+                                <option value="external" {{ request('source') == 'external' ? 'selected' : '' }}>Sewa Luar</option>
+                            </select>
+                            @if(request()->hasAny(['search', 'status', 'source']))
+                                <a href="{{ route('admin.active') }}"
+                                    class="bg-white border border-gray-300 text-gray-500 px-2.5 py-2 rounded-md text-sm hover:bg-gray-50 transition flex-shrink-0"
+                                    title="Reset filter">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </a>
+                            @endif
+                        </div>
 
-                        {{-- Action Buttons --}}
-                        <div class="flex gap-2 border-l border-gray-300 pl-3">
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition">
-                                Cari
-                            </button>
-                            <a href="{{ route('admin.active') }}"
-                                class="bg-white border border-gray-300 text-gray-700 px-4 py-1.5 rounded-md text-sm font-medium hover:bg-gray-50 transition">
-                                Reset
-                            </a>
+                        {{-- Desktop: single row layout --}}
+                        <div class="hidden sm:flex items-center gap-3">
+
+                            {{-- Search --}}
+                            <div class="flex-1 max-w-md">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    placeholder="Cari kode booking, peminjam, tujuan..."
+                                    class="w-full border-gray-300 rounded-md text-sm py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            {{-- Status Filter --}}
+                            <select name="status" onchange="this.form.submit()"
+                                class="border-gray-300 rounded-md text-sm py-1.5 px-3 pr-8 focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <option value="all" {{ request('status', 'all') == 'all' ? 'selected' : '' }}>Semua Status</option>
+                                <option value="prepared" {{ request('status') == 'prepared' ? 'selected' : '' }}>Disiapkan</option>
+                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Sedang Jalan</option>
+                                <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>Terlambat</option>
+                            </select>
+
+                            {{-- Source Filter --}}
+                            <select name="source" onchange="this.form.submit()"
+                                class="border-gray-300 rounded-md text-sm py-1.5 px-3 pr-8 focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <option value="">Semua Unit</option>
+                                <option value="internal" {{ request('source') == 'internal' ? 'selected' : '' }}>Mobil Kampus</option>
+                                <option value="external" {{ request('source') == 'external' ? 'selected' : '' }}>Sewa Luar</option>
+                            </select>
+
+                            {{-- Action Buttons --}}
+                            <div class="flex gap-2 border-l border-gray-300 pl-3">
+                                <button type="submit"
+                                    class="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition">
+                                    Cari
+                                </button>
+                                <a href="{{ route('admin.active') }}"
+                                    class="bg-white border border-gray-300 text-gray-700 px-4 py-1.5 rounded-md text-sm font-medium hover:bg-gray-50 transition">
+                                    Reset
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>
 
-                {{-- COMPACT TABLE --}}
-                <div class="overflow-x-auto">
+                {{-- DESKTOP TABLE --}}
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-blue-600 text-white">
                             <tr>
@@ -271,6 +293,120 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- MOBILE CARD VIEW --}}
+                <div class="sm:hidden divide-y divide-gray-100">
+                    @forelse($activeTrips as $trip)
+                        <div class="p-4 bg-white">
+
+                            {{-- Top row: kode + status badge --}}
+                            <div class="flex items-start justify-between gap-2 mb-3">
+                                <div>
+                                    <span class="font-mono text-sm font-bold text-blue-600">{{ $trip->booking_code }}</span>
+                                    <div class="text-[11px] text-gray-500 mt-0.5">{{ $trip->user->name }}</div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    @if ($trip->status === \App\Enums\BookingStatus::Prepared)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                            <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span>Disiapkan
+                                        </span>
+                                    @elseif($trip->status === \App\Enums\BookingStatus::Active)
+                                        @if (now() > $trip->end_time)
+                                            <div>
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                                                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5 animate-pulse"></span>Terlambat
+                                                </span>
+                                                <div class="text-[10px] text-red-600 mt-1 font-medium text-right">
+                                                    {{ now()->diffForHumans($trip->end_time, ['parts' => 2, 'syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE]) }}
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>Sedang Jalan
+                                            </span>
+                                        @endif
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Jadwal + Tujuan --}}
+                            <div class="bg-gray-50 rounded-lg px-3 py-2 mb-3 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Tujuan</span>
+                                    <span class="text-xs font-semibold text-gray-800 truncate max-w-[60%] text-right">{{ $trip->destination }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Mulai</span>
+                                    <span class="text-xs text-gray-700 font-medium">{{ $trip->start_time->format('d M, H:i') }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Selesai</span>
+                                    <span class="text-xs text-gray-700 font-medium">{{ $trip->end_time->format('d M, H:i') }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Unit info --}}
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    @if ($trip->fulfillment_source == 'internal')
+                                        <div class="text-sm font-semibold text-gray-900">{{ $trip->vehicle->name ?? '-' }}</div>
+                                        <div class="text-xs text-gray-500 font-mono">{{ $trip->vehicle->license_plate ?? '' }}</div>
+                                    @else
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                                                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
+                                            </svg>
+                                            <span class="text-sm font-semibold text-orange-600">{{ $trip->vendor_name ?? 'Vendor' }}</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">{{ $trip->external_vehicle_detail ?? '' }}</div>
+                                    @endif
+                                    <div class="text-xs text-gray-400 mt-0.5">
+                                        Driver: <span class="text-gray-600 font-medium">{{ $trip->driver ? $trip->driver->name : 'Lepas Kunci' }}</span>
+                                    </div>
+                                </div>
+
+                                {{-- Aksi button --}}
+                                <div>
+                                    @if ($trip->status === \App\Enums\BookingStatus::Prepared)
+                                        <form method="POST" action="{{ route('admin.start.trip', $trip) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-1.5 bg-green-600 text-white text-xs px-4 py-2 rounded-md font-medium hover:bg-green-700 transition shadow-sm">
+                                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Mulai
+                                            </button>
+                                        </form>
+                                    @elseif($trip->status === \App\Enums\BookingStatus::Active)
+                                        <button
+                                            onclick="openCompleteModal('{{ route('admin.complete.trip', $trip) }}', '{{ $trip->vehicle->name ?? $trip->external_vehicle_detail }}')"
+                                            class="inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition shadow-sm">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Selesai
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+
+                        </div>
+                    @empty
+                        <div class="px-4 py-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500">Tidak ada kendaraan dalam pantauan</p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
@@ -366,15 +502,6 @@
     </div>
     <script>
         const purposeBubble = document.getElementById('globalPurposeBubble');
-
-        function setStatus(status) {
-            document.getElementById('statusInput').value = status;
-            document.querySelectorAll('.status-pill').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            event.target.closest('form').submit();
-        }
 
         function openCompleteModal(url, vehicleName) {
             document.getElementById('completeForm').action = url;

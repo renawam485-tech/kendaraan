@@ -16,7 +16,7 @@
                     <p class="text-blue-200 text-sm">{{ auth()->user()->email }}</p>
                     @php
                         $roleLabel = [
-                            'admin_ga' => 'Admin GA',
+                            'admin' => 'Admin GA',
                             'approver' => 'Approver',
                             'driver'   => 'Driver',
                             'staff'    => 'Staff',

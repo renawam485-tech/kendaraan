@@ -22,7 +22,7 @@ class BookingApprovedNotification extends Notification
     {
         return [
             'title'        => '✅ Pengajuan Disetujui!',
-            'message'      => "Pengajuan Anda ({$this->booking->booking_code}) ke {$this->booking->destination} telah disetujui oleh {$this->approver->name}. Admin GA sedang menyiapkan kendaraan.",
+            'message'      => "Pengajuan Anda ({$this->booking->booking_code}) ke {$this->booking->destination} telah disetujui oleh {$this->approver->name}. Admin sedang menyiapkan kendaraan.",
             'icon'         => 'check',
             'color'        => 'green',
             'booking_id'   => $this->booking->id,

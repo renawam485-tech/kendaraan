@@ -31,7 +31,7 @@
                             <option value="staff">Staff (Pemohon Biasa)</option>
                             <option value="driver">Driver (Pengemudi)</option>
                             <option value="approver">Approver (Atasan/Manajer)</option>
-                            <option value="admin_ga">Admin GA (Pengelola)</option>
+                            <option value="adminA (Pengelola)</option>
                         </select>
                     </div>
 

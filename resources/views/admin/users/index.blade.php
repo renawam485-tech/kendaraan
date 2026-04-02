@@ -36,7 +36,7 @@
                         <select id="filter-role" name="role"
                             class="border-gray-300 rounded-md text-sm py-1.5 px-3 pr-8 focus:ring-1 focus:ring-blue-500">
                             <option value="">Semua Role</option>
-                            <option value="admin_ga" {{ request('role') == 'admin_ga' ? 'selected' : '' }}>Admin GA</option>
+                            <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin GA</option>
                             <option value="approver" {{ request('role') == 'approver' ? 'selected' : '' }}>Approver</option>
                             <option value="staff"    {{ request('role') == 'staff'    ? 'selected' : '' }}>Staff</option>
                             <option value="driver"   {{ request('role') == 'driver'   ? 'selected' : '' }}>Driver</option>
@@ -95,7 +95,7 @@
                                     <td class="px-3 py-3 whitespace-nowrap text-center">
                                         @php
                                             $roleConfig = [
-                                                'admin_ga' => ['bg-blue-400 text-white',  'Admin GA'],
+                                                'admin' => ['bg-blue-400 text-white',  'Admin GA'],
                                                 'approver' => ['bg-indigo-400 text-white', 'Approver'],
                                                 'driver'   => ['bg-green-400 text-white',  'Driver'],
                                                 'staff'    => ['bg-gray-400 text-white',   'Staff'],
@@ -203,7 +203,7 @@
                             <option value="staff"    {{ old('role') == 'staff'    ? 'selected' : '' }}>Staff</option>
                             <option value="driver"   {{ old('role') == 'driver'   ? 'selected' : '' }}>Driver</option>
                             <option value="approver" {{ old('role') == 'approver' ? 'selected' : '' }}>Approver</option>
-                            <option value="admin_ga" {{ old('role') == 'admin_ga' ? 'selected' : '' }}>Admin GA</option>
+                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin GA</option>
                         </select>
                     </div>
                     <div>
@@ -270,7 +270,7 @@
                             <option value="staff">Staff</option>
                             <option value="driver">Driver</option>
                             <option value="approver">Approver</option>
-                            <option value="admin_ga">Admin GA</option>
+                            <option value="admin">Admin GA</option>
                         </select>
                     </div>
                     <div>

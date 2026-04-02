@@ -349,6 +349,22 @@
     pointer-events: none;
 }
 
+/* Styling tambahan untuk hasil pencarian rental */
+.options-list li.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Warna khusus jika input jumlah penumpang error */
+.text-field.border-red-500 {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Transisi halus untuk error hint */
+[x-cloak] { display: none !important; }
+
 /* time picker */
 .dt-time-panel {
     padding: 1.25rem 1rem 1rem;

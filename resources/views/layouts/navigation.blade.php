@@ -13,11 +13,11 @@
     loading: false,
 
     /* --- Task counters (dinamis dari backend) --- */
-    prepCount: {{ auth()->user()->role === 'admin_ga'
+    prepCount: {{ auth()->user()->role === 'admin'
         ? \App\Models\Booking::where('status', \App\Enums\BookingStatus::Approved)->count()
         : 0 }},
 
-    pantauCount: {{ auth()->user()->role === 'admin_ga'
+    pantauCount: {{ auth()->user()->role === 'admin'
         ? \App\Models\Booking::whereIn('status', [
             \App\Enums\BookingStatus::Prepared,
             \App\Enums\BookingStatus::Active,
@@ -100,7 +100,7 @@
             if (r.ok) { const d = await r.json(); this.approvalCount = d.count ?? 0; }
         } catch(e) {} @endif
 
-        @if (auth()->user()->role === 'admin_ga') try {
+        @if (auth()->user()->role === 'admin') try {
             const r = await fetch('{{ route('admin.pending-count') }}', {
                 credentials: 'same-origin',
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
@@ -257,7 +257,7 @@
                         @endif
 
                         {{-- Admin GA Menu --}}
-                        @if (auth()->user()->role === 'admin_ga')
+                        @if (auth()->user()->role === 'admin')
                             <div class="w-px h-5 bg-gray-300 mx-1"></div>
                             <a href="{{ route('admin.dispatch') }}"
                                 class="relative px-3 py-2 rounded-md text-sm font-medium transition
@@ -689,7 +689,7 @@
 
         @php
             $roleMap = [
-                'admin_ga' => ['Admin GA', 'bg-blue-100 text-blue-700'],
+                'admin' => ['Admin GA', 'bg-blue-100 text-blue-700'],
                 'approver' => ['Approver', 'bg-indigo-100 text-indigo-700'],
                 'staff' => ['Staff', 'bg-gray-100 text-gray-600'],
             ];
@@ -787,7 +787,7 @@
             @endif
 
             {{-- Admin GA Section --}}
-            @if (auth()->user()->role === 'admin_ga')
+            @if (auth()->user()->role === 'admin')
                 <div class="pt-3">
                     <p class="px-3 pb-2 text-[10px] uppercase tracking-wider text-gray-400 font-semibold">
                         Admin GA

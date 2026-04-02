@@ -26,7 +26,7 @@
                             <option value="staff" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff</option>
                             <option value="driver" {{ $user->role == 'driver' ? 'selected' : '' }}>Driver</option>
                             <option value="approver" {{ $user->role == 'approver' ? 'selected' : '' }}>Approver</option>
-                            <option value="admin_ga" {{ $user->role == 'admin_ga' ? 'selected' : '' }}>Admin GA</option>
+                            <option value="admin{ $user->role == 'admin' ? 'selected' : '' }}>Admin GA</option>
                         </select>
                     </div>
 

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@kantor.com',
             'password' => Hash::make('admin123'),
-            'role' => 'admin_ga',
+            'role' => 'admin',
             'department' => 'General Affair'
         ]);
 
