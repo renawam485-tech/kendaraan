@@ -27,6 +27,12 @@ class Booking extends Model
         'passenger_count',
         'preferred_vehicle_type',
         'is_rental',
+        // Field urgency (ditambah via migration)
+        'is_urgent',
+        'approval_deadline',
+        'escalated_to_admin',
+        'escalated_reason',
+        // Field lainnya
         'status',
         'fulfillment_source',
         'vendor_name',
@@ -41,71 +47,84 @@ class Booking extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
-        'prepared_at' => 'datetime',
-        'started_at' => 'datetime',
-        'completed_at' => 'datetime',
-        'cancelled_at' => 'datetime',
-        'with_driver' => 'boolean',
-        'is_rental' => 'boolean',
-        'status' => BookingStatus::class,
-        'cancellation_fee' => 'decimal:2',
+        'start_time'         => 'datetime',
+        'end_time'           => 'datetime',
+        'prepared_at'        => 'datetime',
+        'started_at'         => 'datetime',
+        'completed_at'       => 'datetime',
+        'cancelled_at'       => 'datetime',
+        'approval_deadline'  => 'datetime',
+        'with_driver'        => 'boolean',
+        'is_rental'          => 'boolean',
+        'is_urgent'          => 'boolean',
+        'escalated_to_admin' => 'boolean',
+        'status'             => BookingStatus::class,
+        'cancellation_fee'   => 'decimal:2',
     ];
 
-    /**
-     * Relasi ke User (Peminjam)
-     */
+    // =========================================================================
+    // RELASI
+    // =========================================================================
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi ke Approver
-     */
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approver_id');
     }
 
-    /**
-     * Relasi ke Vehicle
-     */
     public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    /**
-     * Relasi ke Driver
-     */
     public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'driver_id');
     }
 
-    /**
-     * Relasi ke Approval Logs
-     */
     public function approvalLogs(): HasMany
     {
         return $this->hasMany(ApprovalLog::class);
     }
 
-    /**
-     * Scope untuk filter berdasarkan status
-     */
+    // =========================================================================
+    // SCOPES
+    // =========================================================================
+
     public function scopeWithStatus($query, $status)
     {
         return $query->where('status', $status);
     }
 
-    /**
-     * Scope untuk filter berdasarkan tanggal
-     */
     public function scopeDateRange($query, $startDate, $endDate)
     {
         return $query->whereBetween('start_time', [$startDate, $endDate]);
+    }
+
+    /**
+     * Booking urgent yang masih menunggu approval.
+     * Dipakai oleh DashboardController untuk tabel admin.
+     */
+    public function scopeUrgentPending($query)
+    {
+        return $query->where('is_urgent', true)
+                     ->where('status', BookingStatus::Pending);
+    }
+
+    /**
+     * Booking yang sudah melewati approval_deadline
+     * tapi belum dieskalasi ke admin.
+     * Dipakai eksklusif oleh Command CheckApprovalDeadlines.
+     */
+    public function scopeOverdueApproval($query)
+    {
+        return $query->where('status', BookingStatus::Pending)
+                     ->where('escalated_to_admin', false)
+                     ->whereNotNull('approval_deadline')
+                     ->where('approval_deadline', '<', now());
     }
 }

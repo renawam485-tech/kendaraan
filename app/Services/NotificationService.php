@@ -4,28 +4,30 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\User;
-use App\Notifications\WelcomeNotification;
-use App\Notifications\WelcomeGuideNotification;
-use App\Notifications\BookingCreatedNotification;
 use App\Notifications\BookingApprovedNotification;
-use App\Notifications\BookingRejectedNotification;
 use App\Notifications\BookingCancelledNotification;
+use App\Notifications\BookingCreatedNotification;
+use App\Notifications\BookingEscalatedNotification;
+use App\Notifications\BookingRejectedNotification;
 use App\Notifications\CancelledByStaffNotification;
+use App\Notifications\TripCompletedNotification;
+use App\Notifications\TripStartedNotification;
 use App\Notifications\UnitAssignedNotification;
+use App\Notifications\UrgentApprovalNotification;
 use App\Notifications\VendorAssignedNotification;
 use App\Notifications\VendorCancelledNotification;
-use App\Notifications\TripStartedNotification;
-use App\Notifications\TripCompletedNotification;
+use App\Notifications\WelcomeGuideNotification;
+use App\Notifications\WelcomeNotification;
+use Illuminate\Support\Collection;
 
 class NotificationService
 {
-    /* ══════════════════════════════════════════
-       WELCOME — sekali saat login pertama kali
-    ══════════════════════════════════════════ */
+    /* ══════════════════════════════════════════════════════════
+       WELCOME
+    ══════════════════════════════════════════════════════════ */
 
     public static function sendWelcome(User $user): void
     {
-        // Cek apakah notif welcome sudah pernah dikirim
         $alreadySent = $user->notifications()
             ->where('type', WelcomeNotification::class)
             ->exists();
@@ -38,21 +40,19 @@ class NotificationService
         $user->notify(new WelcomeGuideNotification($user->role));
     }
 
-    /* ══════════════════════════════════════════
+    /* ══════════════════════════════════════════════════════════
        BOOKING
-    ══════════════════════════════════════════ */
+    ══════════════════════════════════════════════════════════ */
 
     /** Dipanggil di BookingController@store */
     public static function bookingCreated(Booking $booking): void
     {
-        // Konfirmasi HANYA ke staff pemohon
         $booking->user->notify(new BookingCreatedNotification($booking));
     }
 
     /** Dipanggil di ApprovalController@decide (approved) */
     public static function bookingApproved(Booking $booking, User $approver): void
     {
-        // Beritahu HANYA ke staff pemohon
         $booking->user->notify(new BookingApprovedNotification($booking, $approver));
     }
 
@@ -65,18 +65,42 @@ class NotificationService
     /** Dipanggil di BookingController@cancel */
     public static function bookingCancelled(Booking $booking): void
     {
-        // Konfirmasi ke staff
         $booking->user->notify(new BookingCancelledNotification($booking));
 
-        // Beritahu approver agar tidak memproses lagi
         User::where('role', 'approver')->each(
             fn(User $approver) => $approver->notify(new CancelledByStaffNotification($booking))
         );
     }
 
-    /* ══════════════════════════════════════════
+    /* ══════════════════════════════════════════════════════════
+       URGENCY & ESKALASI  ← BARU
+    ══════════════════════════════════════════════════════════ */
+
+    /**
+     * Dipanggil di BookingController@store ketika is_urgent = true.
+     * Mengirim notif "URGENT" ke approver agar segera merespons dalam 30 menit.
+     */
+    public static function urgentApprovalNeeded(Booking $booking, User $approver): void
+    {
+        $approver->notify(new UrgentApprovalNotification($booking));
+    }
+
+    /**
+     * Dipanggil oleh Command CheckApprovalDeadlines.
+     * Mengirim notif ke semua admin GA bahwa approver tidak merespons.
+     *
+     * @param  Collection<int, User>  $admins
+     */
+    public static function bookingEscalated(Booking $booking, Collection $admins): void
+    {
+        foreach ($admins as $admin) {
+            $admin->notify(new BookingEscalatedNotification($booking));
+        }
+    }
+
+    /* ══════════════════════════════════════════════════════════
        DISPATCH
-    ══════════════════════════════════════════ */
+    ══════════════════════════════════════════════════════════ */
 
     /** Dipanggil di AdminDispatcherController@assignInternal */
     public static function unitAssigned(Booking $booking, string $vehicleName, ?string $driverName = null): void
@@ -96,9 +120,9 @@ class NotificationService
         $booking->user->notify(new VendorCancelledNotification($booking));
     }
 
-    /* ══════════════════════════════════════════
+    /* ══════════════════════════════════════════════════════════
        TRIP
-    ══════════════════════════════════════════ */
+    ══════════════════════════════════════════════════════════ */
 
     /** Dipanggil di AdminDispatcherController@startTrip */
     public static function tripStarted(Booking $booking): void

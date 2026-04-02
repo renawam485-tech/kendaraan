@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Vehicle;
-use App\Models\User;
 use App\Enums\BookingStatus;
+use App\Models\Booking;
+use App\Models\User;
+use App\Models\Vehicle;
 use App\Services\NotificationService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 class BookingController extends Controller
 {
     /**
-     * Status yang mengunci slot kendaraan (sesuai BookingStatus enum).
+     * Status yang mengunci slot kendaraan.
      */
     private const BLOCKING = [
         BookingStatus::Approved,
@@ -25,20 +25,27 @@ class BookingController extends Controller
         BookingStatus::Active,
     ];
 
+    /**
+     * Jika start_time - now() <= nilai ini (menit) → booking URGENT.
+     */
+    private const URGENT_THRESHOLD_MINUTES = 60;
+
+    /**
+     * Deadline approver jika URGENT (menit dari waktu submit).
+     */
+    private const URGENT_DEADLINE_MINUTES = 30;
+
+    /**
+     * Deadline approver jika NORMAL (jam dari waktu submit).
+     */
+    private const NORMAL_DEADLINE_HOURS = 24;
+
+    // =========================================================================
+
     public function create()
     {
         $vehicles = Vehicle::where('asset_status', 'available')->get();
 
-        /*
-         * Build $schedules sebagai plain PHP array dengan EXPLICIT STRING KEY
-         * agar json_encode selalu menghasilkan JSON object {"vehicleId": [...]}
-         * bukan JSON array — ini penting agar JS bisa lookup dengan schedules["1"].
-         *
-         * Kenapa tidak pakai groupBy()->map()->values()?
-         * groupBy() dengan key integer (vehicle_id) bisa menghasilkan JSON array
-         * jika key-nya sequential, dan JSON object jika tidak — perilakunya tidak konsisten.
-         * Dengan loop manual di bawah, hasilnya selalu konsisten.
-         */
         $bookings = Booking::whereIn('status', self::BLOCKING)
             ->where('end_time', '>=', now())
             ->whereNotNull('vehicle_id')
@@ -46,9 +53,9 @@ class BookingController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        $schedules = [];  // akan jadi {"1": [{start, end}, ...], "3": [...]}
+        $schedules = [];
         foreach ($bookings as $b) {
-            $key = (string) $b->vehicle_id;   // string key — wajib agar json_encode hasilkan object
+            $key = (string) $b->vehicle_id;
             $schedules[$key][] = [
                 'start' => $b->start_time->toIso8601String(),
                 'end'   => $b->end_time->toIso8601String(),
@@ -57,6 +64,8 @@ class BookingController extends Controller
 
         return view('bookings.create', compact('vehicles', 'schedules'));
     }
+
+    // =========================================================================
 
     public function store(Request $request)
     {
@@ -69,7 +78,10 @@ class BookingController extends Controller
         ]);
 
         $approver = User::where('role', 'approver')->inRandomOrder()->first();
-        if (!$approver) return back()->with('error', 'Approver tidak ditemukan.')->withInput();
+
+        if (! $approver) {
+            return back()->with('error', 'Approver tidak ditemukan.')->withInput();
+        }
 
         $vehicleId   = null;
         $fulfillment = 'dispatch';
@@ -80,9 +92,23 @@ class BookingController extends Controller
             $fulfillment = 'internal';
         }
 
-        $booking = DB::transaction(function () use ($request, $approver, $vehicleId, $fulfillment) {
+        // ── Hitung urgency sebelum transaction ────────────────────────────────
+        $submitAt  = now();
+        $startTime = Carbon::parse($request->start_time, 'Asia/Jakarta');
 
-            // ── Cek konflik dengan DB lock untuk mencegah race condition ──
+        // diffInMinutes(false) → signed: positif = start masih di depan
+        $minutesUntilDeparture = $submitAt->diffInMinutes($startTime, false);
+        $isUrgent              = $minutesUntilDeparture <= self::URGENT_THRESHOLD_MINUTES;
+
+        $approvalDeadline = $isUrgent
+            ? $submitAt->copy()->addMinutes(self::URGENT_DEADLINE_MINUTES)
+            : $submitAt->copy()->addHours(self::NORMAL_DEADLINE_HOURS);
+        // ──────────────────────────────────────────────────────────────────────
+
+        $booking = DB::transaction(function () use (
+            $request, $approver, $vehicleId, $fulfillment,
+            $isUrgent, $approvalDeadline
+        ) {
             if ($vehicleId) {
                 $isConflict = Booking::where('vehicle_id', $vehicleId)
                     ->whereIn('status', self::BLOCKING)
@@ -93,7 +119,7 @@ class BookingController extends Controller
 
                 if ($isConflict) {
                     throw ValidationException::withMessages([
-                        'vehicle_id' => 'Gagal: Kendaraan baru saja dipesan orang lain di jam tersebut. Silakan pilih waktu atau unit lain.',
+                        'vehicle_id' => 'Gagal: Kendaraan baru saja dipesan orang lain di jam tersebut.',
                     ]);
                 }
             }
@@ -112,23 +138,31 @@ class BookingController extends Controller
                 'preferred_vehicle_type' => $request->boolean('is_rental') ? $request->preferred_vehicle_type : null,
                 'is_rental'              => $request->boolean('is_rental'),
                 'fulfillment_source'     => $request->boolean('is_rental') ? 'external' : $fulfillment,
+                // ── Field urgency ─────────────────────────────────────────
+                'is_urgent'              => $isUrgent,
+                'approval_deadline'      => $approvalDeadline,
+                'escalated_to_admin'     => false,
+                'escalated_reason'       => null,
             ]);
         });
 
-        // ── Notifikasi: konfirmasi ke staff + alert ke semua approver ──
+        // Notifikasi ke pemohon
         NotificationService::bookingCreated($booking);
 
-        return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil dikirim.');
+        // Jika urgent → notifikasi khusus ke approver
+        if ($isUrgent) {
+            NotificationService::urgentApprovalNeeded($booking, $approver);
+        }
+
+        $message = $isUrgent
+            ? '⚡ Pengajuan URGENT berhasil dikirim. Approver segera diberitahu.'
+            : 'Pengajuan berhasil dikirim.';
+
+        return redirect()->route('dashboard')->with('success', $message);
     }
 
-    /**
-     * Endpoint AJAX — cek ketersediaan kendaraan sebelum submit form.
-     *
-     * GET /booking/check-availability
-     *   ?vehicle_id=1
-     *   &start_time=2025-06-10T08:00
-     *   &end_time=2025-06-10T12:00
-     */
+    // =========================================================================
+
     public function checkAvailability(Request $request): JsonResponse
     {
         $request->validate([
@@ -149,13 +183,24 @@ class BookingController extends Controller
         if ($conflict) {
             return response()->json([
                 'available' => false,
-                'message'   => 'Kendaraan ini sudah dipesan untuk rentang waktu tersebut. '
-                    . 'Silakan pilih waktu lain atau unit kendaraan yang berbeda.',
+                'message'   => 'Kendaraan ini sudah dipesan untuk rentang waktu tersebut.',
             ]);
         }
 
-        return response()->json(['available' => true]);
+        // Informasikan jika booking ini akan berstatus URGENT
+        $minutesUntilDeparture = now()->diffInMinutes($start, false);
+        $willBeUrgent          = $minutesUntilDeparture <= self::URGENT_THRESHOLD_MINUTES;
+
+        return response()->json([
+            'available'      => true,
+            'will_be_urgent' => $willBeUrgent,
+            'urgent_message' => $willBeUrgent
+                ? '⚡ Jam keberangkatan < 1 jam. Pengajuan ini akan ditandai URGENT dan approver harus merespons dalam 30 menit.'
+                : null,
+        ]);
     }
+
+    // =========================================================================
 
     public function cancel(Request $request, Booking $booking)
     {
@@ -167,24 +212,19 @@ class BookingController extends Controller
 
         DB::transaction(function () use ($booking, $reason) {
             if (in_array($booking->status, [BookingStatus::Pending, BookingStatus::Approved])) {
-
                 $booking->update([
                     'status'              => BookingStatus::Cancelled,
                     'cancellation_reason' => $reason,
                     'cancelled_at'        => now(),
                 ]);
-
-                // ── Notifikasi: konfirmasi ke staff + alert ke approver ──
                 NotificationService::bookingCancelled($booking);
-            } elseif ($booking->status === BookingStatus::Prepared) {
 
+            } elseif ($booking->status === BookingStatus::Prepared) {
                 if ($booking->fulfillment_source === 'external') {
                     $booking->update([
                         'status'              => BookingStatus::CancelReq,
                         'cancellation_reason' => $reason,
                     ]);
-
-                    // ── Notifikasi: admin GA diberitahu vendor perlu dibatalkan ──
                     NotificationService::vendorCancelled($booking);
                 } else {
                     $booking->update([
@@ -192,8 +232,6 @@ class BookingController extends Controller
                         'cancellation_reason' => $reason,
                         'cancelled_at'        => now(),
                     ]);
-
-                    // ── Notifikasi: unit internal dilepas, staff dikonfirmasi ──
                     NotificationService::bookingCancelled($booking);
                 }
             }
@@ -202,21 +240,19 @@ class BookingController extends Controller
         return back()->with('success', 'Status pembatalan diperbarui.');
     }
 
-    public function history(Request $request)
-{
-    // Menggunakan $request->user() lebih disukai oleh IDE dibanding auth()->user()
-    // sehingga garis merah 'Undefined method' akan hilang.
-    
-    $bookingsRiwayat = $request->user()->bookings()
-        ->whereIn('status', [
-            BookingStatus::Completed,
-            BookingStatus::Cancelled,
-            BookingStatus::Rejected,
-        ])
-        ->latest()
-        ->get();
+    // =========================================================================
 
-    // Pastikan nama view-nya 'booking.history' (tanpa 's' di kata booking)
-    return view('bookings.history', compact('bookingsRiwayat'));
-}
+    public function history(Request $request)
+    {
+        $bookingsRiwayat = $request->user()->bookings()
+            ->whereIn('status', [
+                BookingStatus::Completed,
+                BookingStatus::Cancelled,
+                BookingStatus::Rejected,
+            ])
+            ->latest()
+            ->get();
+
+        return view('bookings.history', compact('bookingsRiwayat'));
+    }
 }
